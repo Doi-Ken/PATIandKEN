@@ -1,0 +1,36 @@
+<html>
+<head>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="https://skyway.io/dist/v2/0.3/peer.js"></script>
+    <script type="text/javascript" src="videochat.js"></script>
+    <audio id="sound-file" preload="auto">
+	    <source src="trumpet1.mp3" type="audio/mp3">
+    </audio>
+</head>
+<body>
+    <h1>離れ離れになった君たちへ</h1>
+    <div>
+        <video id="my-video" style="width: 300px;" autoplay></video>
+        <video id="peer-video" style="width: 300px;" autoplay></video>
+    </div>
+    <div>
+        <p>MyID: <span id="my-id">-</span></p>
+        <p>PeerID: <span id="peer-id">-</span></p>
+        <button id="call-end">End Call</button>
+        <p><span id="message-id">　</span></p>
+        <input type="text" placeholder="message" id="message-id-input">
+    </div>
+    <div>
+        <p>Call Now</p>
+        <input type="text" placeholder="PeerID" id="peer-id-input">
+        <button id="call-start">Start Call</button>
+        
+        <p>Wake Up Call</p>
+        <input type="text" placeholder="PeerID" id="peer-id-res">
+        <p><input type="number" placeholder="h" id="hour">時
+        <input type="number" placeholder="m" id="minutes">分
+        <button id="call-res">予約</button></p>
+        <p><span id="res-id"></span></p>
+    </div>
+</body>
+</html>
