@@ -2,10 +2,10 @@
 <html lang="ja">
  <head>
   <meta http-equiv="Content-Type" content="text/html; charset=Shift_JIS">
-  <meta http-equiv="Content-Style-Type" content="text/css">
+  <meta http-equiv="Content-Style-Type" content="fancy.css">
   <meta http-equiv="Content-Script-Type" content="text/javascript">
   <title>Schedule</title>
-  <style type="text/css">
+  <style type="fancy.css">
   <!--
   -->
   </style>
@@ -14,55 +14,33 @@
 MAXEVENT = 50;  
 SHOWWEEK = 6;   
 
-WIDTH    = "90px"; 
-HEIGHT   = "75px";  
-DEFAULT  = "bordercolor='#cc8066' bgcolor='#fff9f6' style='font-size:9pt; color:#993333;'";
+WIDTH    = "150px"; 
+HEIGHT   = "140px";  
+DEFAULT  = "bordercolor=#202020' bgcolor=white' style='font-size:16pt; color:#202020;'";
  
-TODAY    = "bgcolor='#e6fff6'";  //今日のセルオプション<td ***>
-HOLIDAY  = "bgcolor='#ffe6e6'";  //日曜・祝日のセルオプション
-SATURDAY = "bgcolor='#e6e6ff'";  //土曜のセルオプション
-USUALDAY = "";  //なんでもない日のセルオプション
-SUN = "bgcolor='#f9d9c3' style='color:#ff0000;'"; //１列目日曜のセルオプション
-SAT = "bgcolor='#f9d9c3' style='color:#0000ff;'"; //１列目土曜のセルオプション
-MON = "bgcolor='#f9d9c3'"; //１列目月曜～金曜のセルオプション
+TODAY    = "bgcolor='#e6fff6'"; 
+HOLIDAY  = "bgcolor='peachpuff'"; 
+SATURDAY = "bgcolor='lightblue'";
+USUALDAY = "bgcolor=white"; 
+SUN = "bgcolor='silver'; '"; 
+SAT = "bgcolor='silver' ;'"; 
+MON = "bgcolor='silver'"; 
 
-weekTable = new Array("sun","mon","tue","wed","thu","fri","sat");  //1列目
-monthTable= new Array(31,28,31,30,31,30,31,31,30,31,30,31); //いじるな危険
- //
+weekTable = new Array("sun","mon","tue","wed","thu","fri","sat");
+monthTable= new Array(31,28,31,30,31,30,31,31,30,31,30,31); 
 
-/*** スケジュール登録 notice ***
-  予定はsetSchedules()に書く．
-  newSchedule( 年，月, 日，"td セルオプション", "予定" );
-  ・日
-    －calDate( 年, 月, 週, 曜日0(sun)..6(sat))を使えば，
-      第n×曜日 形式の指定も可能です．
-  ・td セルオプション <td ここ>
-    －指定なしは""で．
-    －悪いがフォントカラーはスタイルシート("style='color:white'")で指定してくれ．
-    －同じ日に複数登録したりすると効かない事があるから注意．
-  ・"予定"
-    －HTMLタグ使えます．
-  ・祝日とあわせてMAXEVENT件までスケジュールを設定可能
-*** notice スケジュール登録 ***/
 function setSchedules(){
   
-  //サンプル予定
-  newSchedule( 2009,  3,  6, "", "飲み会<br>" );
-  newSchedule( 2009,  3,  8, "", "<div align='center' style='background-color:#ff99cc;'><font color='#660000'>映画<\/font><\/div>" );
-  newSchedule( 2009,  3, 24, "", "<span style='background-color:#00ffff; color:blue'>卒業式<\/span><br>" );
-  newSchedule( 2009,  3, calDate(2009, 3, 3, 0), "", "<font color='green'>掃除当番<\/font>" ); //4月第3日曜日
-  newSchedule( 2009,  3, 16, "bgcolor='#ff6699' style='color:white'", "ちーちゃん誕生日<br>" );
+  newSchedule( 2016,  11,  3, "", "<font color='#660000'>学会（北京）<\/font><\/div>");
+   newSchedule( 2016,  11,  4, "", "<font color='#660000'>学会（北京）<\/font><\/div>");
+    newSchedule( 2016,  11,  5, "", "<font color='#660000'>学会（北京）<\/font><\/div>");
+ newSchedule( 2016,  11,  6, "", "<font color='#660000'>学会（北京）<\/font><\/div>");
+  newSchedule( 2016,  11, 28, "bgcolor='silver' style='color:black'", "だれかの誕生日<br>" );
 }
 
-//祝日いじるときはフォーマットは以下のような感じで
-//case 月-1:
-//  Holiday( year, 月, 日, "祝日名<br>" );
-//  Holiday( year, 月, calDate( 年, 月, 週, 曜日0(sun)..6(sat)), "祝日名<br>" );
-//  break;
 function setHolliday( year, month, len ){
   var i, tmp;
-  
-  //振替休日，国民の休日計算用領域確保
+
   holDate  = new Array(MAXEVENT);
   hi = 0;
   
@@ -70,7 +48,7 @@ function setHolliday( year, month, len ){
     switch( month ){
     case  0:
       Holiday( year, 1, 1, "元日<br>" );
-      Holiday( year, 1, calDate(year, 1, 2, 1), "成人の日<br>" ); //1月第2月曜日
+      Holiday( year, 1, calDate(year, 1, 2, 1), "成人の日<br>" ); 
       break;
     case  1:
       Holiday( year, 2, 11, "建国記念の日<br>" );
@@ -87,14 +65,14 @@ function setHolliday( year, month, len ){
       Holiday( year, 5, 5, "こどもの日<br>" );
       break;
     case  6:
-      Holiday( year, 7, calDate(year, 7, 3, 1), "海の日<br>" ); //7月第3月曜日
+      Holiday( year, 7, calDate(year, 7, 3, 1), "海の日<br>" ); 
       break;
     case  8:
-      Holiday( year, 9, calDate(year, 9, 3, 1), "敬老の日<br>" ); //9月第3月曜日
+      Holiday( year, 9, calDate(year, 9, 3, 1), "敬老の日<br>" ); 
       Holiday( year, 9, autumn(year), "秋分の日<br>" );
       break;
     case  9:
-      Holiday( year, 10, calDate(year, 10, 2, 1), "体育の日<br>" ); //10月第2月曜日
+      Holiday( year, 10, calDate(year, 10, 2, 1), "体育の日<br>" );
       break;
     case 10:
       Holiday( year, 11,  3, "文化の日<br>" );
@@ -138,9 +116,6 @@ function setHolliday( year, month, len ){
   }
 }
 
-
-
-//year年month月 第week day曜日の計算
 function calDate( year, month, week, day ){
  var tmp, day1;
  
@@ -150,15 +125,12 @@ function calDate( year, month, week, day ){
  if( day - day1 >= 0 ) tmp = tmp - 7;
  return tmp;
 }
-
-// 春分の日を求める(2000～2099) 確実である保証はないと思う
 function vernal( year ){
  var tmp = Math.floor( 20.69115 + 0.242194 * (year - 2000)
                        - Math.floor((year - 2000)/4) );
  return tmp;
 }
 
-// 秋分の日を求める(2000～2099) 確実である保証はないと思う
 function autumn( year ){
  var tmp = Math.floor( 23.09 + 0.242194 * (year - 2000)
                        - Math.floor((year - 2000)/4) );
@@ -183,9 +155,8 @@ function Holiday( year, month, date, name ){
   tmp = new Date( year, month, date );
   newEvent( tmp, HOLIDAY, name );
   
-  //振替休日、国民の休日計算用データ登録
   if( hi >= MAXEVENT ) return;
-  //インサーションソート
+ 
   for( i=hi-1;
        i>=0 && holDate[i].getMonth() == month && holDate[i].getDate() > date;
        i-- ){
@@ -195,14 +166,13 @@ function Holiday( year, month, date, name ){
   hi++;
 }
 
-//dateを基準にdis日動かした日を返す
 function moveDate( date, dis ){
   var d, m, y;
   
   d = date.getDate();
   m = date.getMonth();
   y = date.getFullYear();
-  if ( ((y%4)==0 && (y%100)!=0) || (y%400)==0 ) //うるうの判定(2000～)
+  if ( ((y%4)==0 && (y%100)!=0) || (y%400)==0 ) 
         monthTable[1] = 29;
   else  monthTable[1] = 28;
   
@@ -213,7 +183,7 @@ function moveDate( date, dis ){
     if( m > 11 ){
       m=0;
       y++;
-      if ( ((y%4)==0 && (y%100)!=0) || (y%400)==0 ) //うるうの判定(2000～)
+      if ( ((y%4)==0 && (y%100)!=0) || (y%400)==0 ) 
             monthTable[1] = 29;
       else  monthTable[1] = 28;
     }
@@ -223,7 +193,7 @@ function moveDate( date, dis ){
     if( m < 0 ){
       m=11;
       y--;
-      if ( ((y%4)==0 && (y%100)!=0) || (y%400)==0 ) //うるうの判定(2000～)
+      if ( ((y%4)==0 && (y%100)!=0) || (y%400)==0 ) 
             monthTable[1] = 29;
       else  monthTable[1] = 28;
     }
@@ -232,36 +202,25 @@ function moveDate( date, dis ){
   return (new Date(y,m,d));
 }
 
-//Main関数
+
 function showCalendar( argDate ){
   var i, j, k, tmpDate;
   
   tmp = argDate.getMonth() + 1;
   document.formSdlCal.dateInput.value = argDate.getFullYear() + "/" + tmp + "/" + argDate.getDate();
-  
-  //スケジュール登録用領域確保
+
+
   sdlDate  = new Array(MAXEVENT);
   sdlSel   = new Array(MAXEVENT);
   sdlName  = new Array(MAXEVENT);
   si = 0;
-  
-  //覚えとく
+
   gBaseDate = argDate;
-  //argDateの週の日曜日から表示する
   tmpDate = moveDate( argDate, -argDate.getDay() );
-  //"今日"を記憶
   toDate = new Date();
-  
-  //表示する可能性のある (SHOWWEEK/4)+2ヶ月先まで祝日を登録
   setHolliday( tmpDate.getFullYear(), tmpDate.getMonth(), Math.floor(SHOWWEEK/4)+2 );
-  
-  //スケジュールを登録
   setSchedules();
-  
-  
-  //描画用コード開始
   docubuf = "<table border='3' cellspacing='0' " + DEFAULT + ">";
-  //曜日
   docubuf += "<tr>";
   for(i=0; i<7; i++){
     docubuf += "<td align='center' ";
@@ -271,14 +230,12 @@ function showCalendar( argDate ){
     docubuf += "<\/td>";
   }
   docubuf += "<\/tr>";
-  
-  //日付
+
   for(i=0; i<SHOWWEEK; i++){
     docubuf += "<tr valign='top' height='" + HEIGHT + "'>";
     for(j=0; j<7; j++){
       docubuf += "<td width='" + WIDTH + "' ";
       
-      //セル色は最後に登録したの優先．
       for(k=si-1; k>=0; k--)
         if( sdlDate[k].getDate()  == tmpDate.getDate()  &&
             sdlDate[k].getMonth() == tmpDate.getMonth() &&
@@ -287,36 +244,28 @@ function showCalendar( argDate ){
           )
           break;
       
-      //セル色設定
       if( tmpDate.getDate()  == toDate.getDate()  &&
           tmpDate.getMonth() == toDate.getMonth() )
                         docubuf += TODAY     + ">";
-                        //別に１年前の今日に色付けてもいいか
       else if( k >= 0 ) docubuf += sdlSel[k] + ">";
       else if(j==0)     docubuf += HOLIDAY   + ">";
       else if(j==6)     docubuf += SATURDAY  + ">";
       else              docubuf += USUALDAY  + ">";
       
-      //日付表示
       docubuf += "<strong>";
-      //年初めは年から表示
       if( tmpDate.getDate()==1 && tmpDate.getMonth()==0 )
         docubuf += tmpDate.getFullYear() + "/";
-      //最初と月初めは月から表示
       if( tmpDate.getDate()==1 || (i==0 && j==0) )
         docubuf += tmpDate.getMonth()+1 + "/";
-      //普通は日だけ表示
       docubuf += tmpDate.getDate() + "<\/strong><br>";
       
-      //スケジュール埋め込み．複数あったら全部．登録順．
       for(k=0; k<si; k++)
         if( sdlDate[k].getDate()  == tmpDate.getDate()
             && sdlDate[k].getMonth() == tmpDate.getMonth()
             && sdlDate[k].getYear()  == tmpDate.getYear()
           )
           docubuf += sdlName[k];
-      
-      //日を進める
+ 
       tmpDate = moveDate( tmpDate, 1 );
       
       docubuf += "<\/td>";
@@ -333,85 +282,30 @@ function showCalendar( argDate ){
  </head>
  <body bgcolor="#ffffff">
 <table width="80%" align="center"><tr><td>
-<font size="+1"><strong>JavaScript カレンダー型スケジュール帳</strong></font><br>
+<font size="+1"><strong>Schedule</strong></font><br>
 　<br>
 </td></tr></table>
 <div align="center">
-<!-- ここからカレンダー -->
+
 <div id="divSdlCal"></div>
 <form name="formSdlCal" action="javascript:showCalendar(new Date(document.formSdlCal.dateInput.value));">
 <input type="button" value="＜＜" onclick="showCalendar(moveDate(gBaseDate,-7*(SHOWWEEK-1)))">
 <input type="button" value=" ＜ " onclick="showCalendar(moveDate(gBaseDate,-7))">
-<input type="button" value="今日" onclick="showCalendar(new Date())">
+<input type="button" value="Today" onclick="showCalendar(new Date())">
 <input type="button" value=" ＞ " onclick="showCalendar(moveDate(gBaseDate,7))">
 <input type="button" value="＞＞" onclick="showCalendar(moveDate(gBaseDate,7*(SHOWWEEK-1)))">
 <br>
 date
 <input type="text" name="dateInput" value="">
-<input type="button" value="表示" onclick="showCalendar(new Date(document.formSdlCal.dateInput.value))">
+<input type="button" value="show" onclick="showCalendar(new Date(document.formSdlCal.dateInput.value))">
 </form>
-<script type="text/javascript"><!--
-// showCalendar(dateクラス 引数の例)
-//  今週から表示           new Date()
-//  2004/1/24の週から表示  new Date(2004,0,24) 月は１引く事．
-//  7日前の週から表示      moveDate(new Date(), -7)
-//  今週が最後になる       moveDate(new Date(), -7*(SHOWWEEK-1))
-//     showCalendar(dateクラス 引数の例)
-showCalendar(new Date(2009,2,1)); ////スケジュール表示デモ用
-//showCalendar(new Date()); ////起動時にこれで表示（1個上のかわりにこっちを使ってね）
-// --></script>
-<!-- ここまでカレンダー -->
+<script type="text/javascript">
+showCalendar(new Date()); 
+</script>
 　<br>
-n週間分のカレンダーを登録したスケジュールと一緒に表示するアプリ．
 </div>
 　<br>
-<table width="80%" align="center"><tr><td>
-<strong>特徴</strong>
-<ul>
- <li>月をまたいだ表示ができる(だがそれしかできない)</li>
- <li>スケジュールを登録して表示できる</li>
- <li>色とかサイズとかある程度簡単に変えられるようにした</li>
- <li>祝日を無駄にがんばった
- <ul>
-  <li>国民の休日と振替休日を本気で計算した</li>
-  <li>春分の日と秋分の日も2099まで自動計算できるけどずれたらごめん</li>
-  <li>祝日の変更もある程度簡単にできるようになってると思う</li>
- </ul>
- </li>
- <li>欠点はソースいじらないとスケジュール登録できないところか</li>
-</ul>
-　<br>
-<strong>バージョン情報</strong><br>
-<ul>
- <li>ver1.5 08/09/05 Firefox, Google Chromeにもたぶん対応</li>
- <li>ver1.4 07/03/29 いつの間にか国民の祝日やら振替休日の扱いやらが変わってたので対応</li>
- <li>ver1.3 06/03/03 zipファイルタイプのやつが変数の初期化をしてない関係で
-エラーを出してたのでこっそり修正</li>
- <li>ver1.3 05/04/16 1週間送り，もっと送りボタンを追加</li>
- <li>ver1.2 04/11/18 "今日"ボタンを追加</li>
- <li>ver1.1 04/09/30 日付入力フォームを追加</li>
-</ul>
-　<br>
-<strong>ダウンロード</strong><br>
-<ul>
- <li>ヘッダにスクリプトが書いてあるやつが欲しい人はこのページのソースを表示して保存．</li>
- <li>スクリプトを.jsファイルに分けてあるやつが欲しい人は<a href="sdlcal.zip">sdlcal.zip</a>をダウンロード．</li>
- <li>レイアウトをスタイルシートで指定するやつが欲しい人は<a href="sdlcal_css.zip">sdlcal_css.zip</a>をダウンロード．</li>
- </ul>
-　<br>
-<strong>操作方法</strong><br>
-zipファイルのほうは中に入ってるsample.html参照．<br>
-これはスクリプトの最初のほうに変更しそうなものを固めてるから
-その辺のコメントをみながら適当に編集する．
-起動時の表示開始日時の指定はbodyに直接書いてあるスクリプト(showCalendar)で．<br>
-　<br>
-<strong>その他</strong><br>
-<ul>
- <li>まだバグが結構残ってるかも．
-知らせられる人は知らせてくれたらできるだけ直すし，
-自分で直したい人は適当に直してあげてください．</li>
- <li>このプログラムが原因で何かまずい事が起きたとか，PCが壊れたとかいわれても一切責任は取りません．</li>
-</ul>
+<table width="80%" align="center"><tr><td> 
 　<br>
 </td></tr></table>
 </body>
