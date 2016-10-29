@@ -1,36 +1,285 @@
-<html>
+﻿<!DOCTYPE HTML>
+<html lang="en">
 <head>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-    <script type="text/javascript" src="https://skyway.io/dist/v2/0.3/peer.js"></script>
-    <script type="text/javascript" src="videochat.js"></script>
-    <audio id="sound-file" preload="auto">
-	    <source src="trumpet1.mp3" type="audio/mp3">
-    </audio>
+  <title>SkyWay chat demo</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Language" content="en-us">
+  <link href="fancy.css" rel="stylesheet" type="text/css">
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+  <script type="text/javascript" src="https://cdn.skyway.io/skyway.js"></script>
+  <script>
+    // Connect to SkyWay, have server assign an ID instead of providing one
+    // Showing off some of the configs available with SkyWay :).
+
+      var localStream;
+      var connectedCall;
+
+      var peer = new Peer({
+      // Set API key for cloud server (you don't need this if you're running your
+      // own.
+      key: '0ad28388-a0f8-47dd-b444-83e54bbcdf7c',
+      // Set highest debug level (log everything!).
+      debug: 3,
+      // Set a logging function:
+      logFunction: function() {
+        var copy = Array.prototype.slice.call(arguments).join(' ');
+        $('.log').append(copy + '<br>');
+      }
+    });
+    var connectedPeers = {};
+    // Show this peer's ID.
+    peer.on('open', function(id){
+      $('#pid').text(id);
+    });
+    // Await connections from others
+    peer.on('connection', connect);
+    peer.on('error', function (err) {
+        console.log(err);
+    });
+
+    // 相手からビデオ通話がかかってきた場合、このcallイベントが呼ばれる
+    // - 渡されるcallオブジェクトを操作することで、ビデオ映像を送受信できる
+    peer.on('call', function (call) {
+
+        // 切断時に利用するため、コールオブジェクトを保存しておく
+        connectedCall = call;
+
+        // 相手のIDを表示する
+        // - 相手のIDはCallオブジェクトのpeerプロパティに存在する
+        $("#rid").text(call.peer);
+
+        // 自分の映像ストリームを相手に渡す
+        // - getUserMediaで取得したストリームオブジェクトを指定する
+        call.answer(localStream);
+
+        // 相手のストリームが渡された場合、このstreamイベントが呼ばれる
+        // - 渡されるstreamオブジェクトは相手の映像についてのストリームオブジェクト
+        call.on('stream', function (stream) {
+
+            // 映像ストリームオブジェクトをURLに変換する
+            // - video要素に表示できる形にするため変換している
+            var url = URL.createObjectURL(stream);
+
+            // video要素のsrcに設定することで、映像を表示する
+            $('#peer-video').prop('src', url);
+        });
+    });
+
+    $(function () {
+
+        // カメラ／マイクのストリームを取得する
+        // - 取得が完了したら、第二引数のFunctionが呼ばれる。呼び出し時の引数は自身の映像ストリーム
+        // - 取得に失敗した場合、第三引数のFunctionが呼ばれる
+        navigator.getUserMedia({ audio: true, video: true }, function (stream) {
+
+            // このストリームを通話がかかってき場合と、通話をかける場合に利用するため、保存しておく
+            localStream = stream;
+
+            // 映像ストリームオブジェクトをURLに変換する
+            // - video要素に表示できる形にするため変換している
+            var url = URL.createObjectURL(stream);
+
+            // video要素のsrcに設定することで、映像を表示する
+            $('#my-video').prop('src', url);
+
+        }, function () { alert("Error!"); });
+
+        // Start Callボタンクリック時の動作
+        $('#call-start').click(function () {
+
+            // 接続先のIDをフォームから取得する
+            var peer_id = $('#rid').val();
+
+            // 相手と通話を開始して、自分のストリームを渡す
+            var call = peer.call(peer_id, localStream);
+
+            // 相手のストリームが渡された場合、このstreamイベントが呼ばれる
+            // - 渡されるstreamオブジェクトは相手の映像についてのストリームオブジェクト
+            call.on('stream', function (stream) {
+                // 相手のIDを表示する
+                $("#rid").text(call.peer);
+
+                // 映像ストリームオブジェクトをURLに変換する
+                // - video要素に表示できる形にするため変換している
+                var url = URL.createObjectURL(stream);
+
+                // video要素のsrcに設定することで、映像を表示する
+                $('#peer-video').prop('src', url);
+            });
+        });
+
+        // End　Callボタンクリック時の動作
+        $('#close').click(function () {
+            // ビデオ通話を終了する
+            connectedCall.close();
+        });
+    });
+
+    // Handle a connection object.
+    function connect(c) {
+      // Handle a chat connection.
+      if (c.label === 'chat') {
+        var chatbox = $('<div></div>').addClass('connection').addClass('active').attr('id', c.remoteId);
+        var header = $('<h1></h1>').html('Chat with <strong>' + c.remoteId + '</strong>');
+        var messages = $('<div><em>Peer connected.</em></div>').addClass('messages');
+        chatbox.append(header);
+        chatbox.append(messages);
+        // Select connection handler.
+        chatbox.on('click', function() {
+          if ($(this).attr('class').indexOf('active') === -1) {
+            $(this).addClass('active');
+          } else {
+            $(this).removeClass('active');
+          }
+        });
+        $('.filler').hide();
+        $('#connections').append(chatbox);
+        c.on('data', function(data) {
+          messages.append('<div><span class="peer">' + c.remoteId + '</span>: ' + data +
+            '</div>');
+        });
+        c.on('close', function() {
+          alert(c.remoteId + ' has left the chat.');
+          chatbox.remove();
+          if ($('.connection').length === 0) {
+            $('.filler').show();
+          }
+          delete connectedPeers[c.remoteId];
+        });
+      } else if (c.label === 'file') {
+        c.on('data', function(data) {
+          // If we're getting a file, create a URL for it.
+          if (data.constructor === ArrayBuffer) {
+            var dataView = new Uint8Array(data);
+            var dataBlob = new Blob([dataView]);
+            var url = window.URL.createObjectURL(dataBlob);
+            $('#' + c.remoteId).find('.messages').append('<div><span class="file">' +
+              c.remoteId + ' has sent you a <a target="_blank" href="' + url + '">file</a>.</span></div>');
+          }
+        });
+      }
+      connectedPeers[c.remoteId] = 1;
+    }
+    $(document).ready(function() {
+      // Prepare file drop box.
+      var box = $('#box');
+      box.on('dragenter', doNothing);
+      box.on('dragover', doNothing);
+      box.on('drop', function(e){
+        e.originalEvent.preventDefault();
+        var file = e.originalEvent.dataTransfer.files[0];
+        eachActiveConnection(function(c, $c) {
+          if (c.label === 'file') {
+            c.send(file);
+            $c.find('.messages').append('<div><span class="file">You sent a file.</span></div>');
+          }
+        });
+      });
+      function doNothing(e){
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      $('#rid').focus();
+      // Connect to a peer
+      $('#connect').submit(function(e) {
+        e.preventDefault();
+        var requestedPeer = $('#rid').val();
+        if (!connectedPeers[requestedPeer]) {
+          // Create 2 connections, one labelled chat and another labelled file.
+          var c = peer.connect(requestedPeer, {
+            label: 'chat',
+            metadata: {message: 'hi i want to chat with you!'}
+          });
+          c.on('open', function() {
+            connect(c);
+          });
+          c.on('error', function(err) { alert(err); });
+          var f = peer.connect(requestedPeer, { label: 'file', reliable: true });
+          f.on('open', function() {
+            connect(f);
+          });
+          f.on('error', function(err) { alert(err); });
+        }
+        connectedPeers[requestedPeer] = 1;
+      });
+      // Close a connection.
+      $('#close').click(function() {
+        eachActiveConnection(function(c) {
+          c.close();
+        });
+      });
+      // Send a chat message to all active connections.
+      $('#send').submit(function(e) {
+        e.preventDefault();
+        // For each active connection, send the message.
+        var msg = $('#text').val();
+        eachActiveConnection(function(c, $c) {
+          if (c.label === 'chat') {
+            c.send(msg);
+            $c.find('.messages').append('<div><span class="you">You: </span>' + msg
+              + '</div>');
+          }
+        });
+        $('#text').val('');
+        $('#text').focus();
+      });
+      // Goes through each active peer and calls FN on its connections.
+      function eachActiveConnection(fn) {
+        var actives = $('.active');
+        var checkedIds = {};
+        actives.each(function() {
+          var peerId = $(this).attr('id');
+          if (!checkedIds[peerId]) {
+            var conns = peer.connections[peerId];
+            for (var i = 0, ii = conns.length; i < ii; i += 1) {
+              var conn = conns[i];
+              fn(conn, $(this));
+            }
+          }
+          checkedIds[peerId] = 1;
+        });
+      }
+      // Show browser version
+      $('#browsers').text(navigator.userAgent);
+    });
+    // Make sure things clean up properly.
+    window.onunload = window.onbeforeunload = function(e) {
+      if (!!peer && !peer.destroyed) {
+        peer.destroy();
+      }
+    };
+  </script>
 </head>
+
 <body>
-    <h1>離れ離れになった君たちへ</h1>
+
+<div id="actions">
+  Your Peer ID is <span id="pid"></span><br>
+  Connect to a peer:
+  <form id="connect">
+    <input type="text" id="rid" placeholder="Someone else's id">
+    <input class="button" type="submit" id="call-start" value="Connect">
+  </form>
+  <br>
+  <br>
+  <form id="send">
+    <input type="text" id="text" placeholder="Enter message">
+    <input class="button" type="submit" value="Send to selected peers">
+  </form>
+  <button id="close">Close selected connections</button>
+</div>
+
+<div id="wrap"><div id="connections"><span class="filler">You have not yet
+        made any connections.</span><video id="peer-video" style="width: 300px;" autoplay></video></div>
+  <div class="clear"></div></div>
+
     <div>
-        <video id="my-video" style="width: 300px;" autoplay></video>
-        <video id="peer-video" style="width: 300px;" autoplay></video>
+        <video id="my-video" style="width: 150px; float: left;" autoplay></video>    
     </div>
-    <div>
-        <p>MyID: <span id="my-id">-</span></p>
-        <p>PeerID: <span id="peer-id">-</span></p>
-        <button id="call-end">End Call</button>
-        <p><span id="message-id">　</span></p>
-        <input type="text" placeholder="message" id="message-id-input">
-    </div>
-    <div>
-        <p>Call Now</p>
-        <input type="text" placeholder="PeerID" id="peer-id-input">
-        <button id="call-start">Start Call</button>
-        
-        <p>Wake Up Call</p>
-        <input type="text" placeholder="PeerID" id="peer-id-res">
-        <p><input type="number" placeholder="h" id="hour">時
-        <input type="number" placeholder="m" id="minutes">分
-        <button id="call-res">予約</button></p>
-        <p><span id="res-id"></span></p>
-    </div>
+
+<div id="box" style="width: 300px; margin-left: 200px; background: #fff; font-size: 18px;padding:40px 30px; text-align: center;">
+  Drag file here to send to active connections.
+</div>
+
 </body>
 </html>
