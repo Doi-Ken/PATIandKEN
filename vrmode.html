@@ -1,0 +1,33 @@
+<html>
+<title> VR mode </title>
+<head>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="https://skyway.io/dist/v2/0.3/peer.js"></script>
+    <script type="text/javascript" src="vrmode.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/demo.css" />
+</head>
+<body>
+    <SCRIPT language="JavaScript">
+         t = setInterval("DspClk()", 500);
+    </SCRIPT>
+    　<p>  
+        <center>
+    <div>
+        <video id="peer-video" autoplay style="border-radius: 80px 80px 80px 80px; width: 320px; height: 240px; border: 1px solid black;"></video>
+         <video id="peer-video2" autoplay style="border-radius: 80px 80px 80px 80px; width: 320px; height: 240px; border: 1px solid black;"></video>
+    </div>
+    </center>
+    <div>
+        <font size="5">
+        <p>MyID: <span id="my-id">-</span></p>
+        <p>PeerID: <span id="peer-id">-</span></p>
+        <button id="call-end">End Call</button>
+
+    </div>
+    <div>
+        <p>Call Now</p>
+        <input type="text" placeholder="PeerID" id="peer-id-input">
+        <button id="call-start">Start Call</button>
+    </font>
+</body>
+</html>
