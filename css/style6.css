@@ -8,6 +8,23 @@
     font-weight: normal;
     font-style: normal;
 }
+
+.MainTitle{
+-webkit-transition: all 0.3s ease-out;
+-moz-transition: all 0.3s ease-out;
+-o-transition: all 0.3s ease-out;
+transition: all 0.3s ease-out;
+}
+.MainTitle:hover{
+color: #3b3b3b;
+text-shadow:
+-1px -1px 0px #FFAAD4,
+1px -1px 0px #FFAAD4,
+1px 1px 0px #FFAAD4,
+-1px 1px 0px #FFAAD4,
+1px 2px 3px rgba(0, 0, 0, 0.6);
+}
+
 .ca-menu{
     padding:0;
     margin:20px auto;
