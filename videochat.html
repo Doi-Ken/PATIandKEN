@@ -37,9 +37,40 @@
         console.log(err);
     });
 
+    var new_id;
+    function onButtonClick() {
+
+        new_id = document.getElementById("new_id").value;
+        console.log(new_id);
+
+        peer = new Peer(new_id, {
+            // Set API key for cloud server (you don't need this if you're running your
+            // own.
+            key: '0ad28388-a0f8-47dd-b444-83e54bbcdf7c',
+            // Set highest debug level (log everything!).
+            debug: 3,
+            // Set a logging function:
+            logFunction: function () {
+                var copy = Array.prototype.slice.call(arguments).join(' ');
+                $('.log').append(copy + '<br>');
+            }
+        });
+
+        peer.on('open', function (id) {
+            $('#pid').text(id);
+        });
+        // Await connections from others
+        peer.on('connection', connect);
+        peer.on('error', function (err) {
+            console.log(err);
+        });
+        peer.on('call', callfunc);
+    }
+
     // 相手からビデオ通話がかかってきた場合、このcallイベントが呼ばれる
     // - 渡されるcallオブジェクトを操作することで、ビデオ映像を送受信できる
-    peer.on('call', function (call) {
+    peer.on('call', callfunc);
+        function callfunc(call) {
 
         // 切断時に利用するため、コールオブジェクトを保存しておく
         connectedCall = call;
@@ -63,7 +94,7 @@
             // video要素のsrcに設定することで、映像を表示する
             $('#peer-video').prop('src', url);
         });
-    });
+    }
 
     $(function () {
 
@@ -254,7 +285,10 @@
 <body>
 
 <div id="actions">
-  Your Peer ID is <span id="pid"></span><br>
+  Your Peer ID is <span id="pid"></span>
+  <input type="text" id="new_id" name ="newID" style="margin-left: 100px;" placeholder="new ID">
+    <input class="button" type="submit" id="changeID" value="change ID" onclick="onButtonClick();">
+    <br>
   Connect to a peer:
   <form id="connect">
     <input type="text" id="rid" placeholder="Someone else's id">
