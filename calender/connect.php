@@ -1,5 +1,5 @@
 <?php
-$host="http://patiandken.s3-website-ap-northeast-1.amazonaws.com:3306";
+$host="dbken.cd1ftqlvdpkw.ap-northeast-1.rds.amazonaws.com:3306";
 $db_user="dbuser";
 $db_pass="domdomdom";
 $db_name="dbken";
